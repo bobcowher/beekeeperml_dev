@@ -1,0 +1,79 @@
+---
+const navLinks = [
+  { href: '/', label: 'Home' },
+  { href: '/download', label: 'Download' },
+  { href: '/docs', label: 'Docs' },
+  { href: '/our-business-model', label: 'Our Business Model' },
+];
+const { pathname } = Astro.url;
+---
+
+<nav class="nav">
+  <a href="/" class="nav-logo">Beekeeper<span>ML</span></a>
+  <ul class="nav-links">
+    {navLinks.map(link => (
+      <li>
+        <a href={link.href} class={pathname === link.href ? 'active' : ''}>
+          {link.label}
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<style>
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    height: 60px;
+    background: #fff;
+    border-bottom: 1px solid var(--color-border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .nav-logo {
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--color-text);
+    text-decoration: none;
+    letter-spacing: -0.01em;
+  }
+
+  .nav-logo span {
+    color: var(--color-accent);
+  }
+
+  .nav-links {
+    list-style: none;
+    display: flex;
+    gap: 2rem;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav-links a {
+    text-decoration: none;
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.15s;
+  }
+
+  .nav-links a:hover,
+  .nav-links a.active {
+    color: var(--color-text);
+  }
+
+  @media (max-width: 600px) {
+    .nav-links {
+      gap: 1rem;
+    }
+    .nav-links a {
+      font-size: 0.8rem;
+    }
+  }
+</style>
