@@ -1,0 +1,111 @@
+---
+---
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <h1>Agent-first ML training management for your home lab</h1>
+      <p class="hero-sub">
+        BeekeeperML turns your home lab server into an agent-ready ML training platform.
+        Install it once, then let your AI agents handle the rest.
+      </p>
+      <div class="hero-ctas">
+        <a href="/download" class="btn btn-primary">Download</a>
+        <a href="/docs" class="btn btn-secondary">View Docs</a>
+      </div>
+    </div>
+    <div class="hero-image">
+      <div class="browser-frame">
+        <div class="browser-bar">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </div>
+        <img
+          src="/screenshot.png"
+          alt="BeekeeperML dashboard showing a live training run with log output"
+          width="800"
+          height="500"
+        />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    background: var(--color-bg-alt);
+    padding: 5rem 2rem;
+  }
+
+  .hero-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+
+  .hero h1 {
+    font-size: 2.5rem;
+    line-height: 1.15;
+    font-weight: 700;
+    margin: 0 0 1.25rem;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-sub {
+    font-size: 1.1rem;
+    color: var(--color-text-muted);
+    line-height: 1.7;
+    margin: 0 0 2rem;
+  }
+
+  .hero-ctas {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .browser-frame {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.12);
+    border: 1px solid var(--color-border);
+  }
+
+  .browser-bar {
+    background: #e5e5e5;
+    padding: 0.5rem 0.75rem;
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #c0c0c0;
+    display: block;
+    flex-shrink: 0;
+  }
+
+  .browser-frame img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  @media (max-width: 860px) {
+    .hero-inner {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+
+    .hero h1 {
+      font-size: 2rem;
+    }
+  }
+</style>
