@@ -1,17 +1,92 @@
 ---
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import Hero from '../components/Hero.astro';
+import FeatureCard from '../components/FeatureCard.astro';
 
+const features = [
+  {
+    title: 'Agent-first MCP API',
+    description:
+      'Connect Claude, GPT-4, or any MCP-compatible agent directly to your training server. Start runs, check status, pull logs — all via tool calls.',
+  },
+  {
+    title: 'Parallel training runs',
+    description:
+      'Run multiple branches simultaneously. Each parallel run gets its own workspace, log file, and TensorBoard instance — ideal for A/B experiments.',
+  },
+  {
+    title: 'TensorBoard built-in',
+    description:
+      'Metrics embedded in the UI, no separate setup required. BeekeeperML starts and stops TensorBoard automatically with each training run.',
+  },
+  {
+    title: 'Runs on your hardware',
+    description:
+      'Install on any Linux server with a GPU. Your data, your compute, your control. No cloud dependency required.',
+  },
+];
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<MarketingLayout title="Home">
+  <Hero />
+
+  <section class="features">
+    <div class="features-inner">
+      <h2>Built for the way you actually work</h2>
+      <div class="features-grid">
+        {features.map(f => (
+          <FeatureCard title={f.title} description={f.description} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="callout">
+    <div class="callout-inner">
+      <p>Free forever for home lab users.</p>
+    </div>
+  </section>
+</MarketingLayout>
+
+<style>
+  .features {
+    padding: 5rem 2rem;
+  }
+
+  .features-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+  }
+
+  .features h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0 0 2.5rem;
+    text-align: center;
+    letter-spacing: -0.01em;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .callout {
+    background: var(--color-accent);
+    padding: 3.5rem 2rem;
+  }
+
+  .callout-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .callout p {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0;
+  }
+</style>
