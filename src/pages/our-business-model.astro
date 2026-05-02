@@ -1,0 +1,90 @@
+---
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+---
+
+<MarketingLayout
+  title="Our Business Model"
+  description="How BeekeeperML stays free for home lab users and how we plan to sustain it."
+>
+  <div class="page">
+    <div class="page-inner">
+      <h1>Our Business Model</h1>
+
+      <section class="section">
+        <h2>Free forever for home lab users</h2>
+        <p>
+          If you're running BeekeeperML on your own server for personal ML work, it's free.
+          Not a free trial. Not a limited free tier. Just free.
+        </p>
+        <p>
+          Home lab ML is underserved. Most tooling assumes you're either a student on a cloud
+          notebook or a company with a DevOps team. BeekeeperML exists for the space in between —
+          people running real hardware at home, doing real research.
+        </p>
+      </section>
+
+      <section class="section">
+        <h2>How we plan to make money</h2>
+        <p>
+          Through backend integrations. As BeekeeperML adds support for cloud compute providers,
+          we'll earn a referral cut on compute spend that flows through the platform.
+        </p>
+        <p>
+          These integrations are completely optional. If you only ever use your own hardware,
+          you'll never pay anything. If you want to burst to cloud GPUs for a large run,
+          the integration will be there — and that's where we make money.
+        </p>
+      </section>
+
+      <section class="section">
+        <h2>Why we're building it this way</h2>
+        <p>
+          We'd rather build something the community actually uses first, and figure out the
+          business second. A tool people trust is worth more than a tool people pay for once
+          and abandon.
+        </p>
+      </section>
+    </div>
+  </div>
+</MarketingLayout>
+
+<style>
+  .page {
+    padding: 4rem 2rem;
+  }
+
+  .page-inner {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  h1 {
+    font-size: 2.25rem;
+    font-weight: 700;
+    margin: 0 0 3rem;
+    letter-spacing: -0.02em;
+  }
+
+  .section {
+    margin-bottom: 3rem;
+  }
+
+  .section h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 1rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 2px solid var(--color-accent);
+    display: inline-block;
+  }
+
+  .section p {
+    color: var(--color-text-muted);
+    line-height: 1.8;
+    margin: 0 0 1rem;
+  }
+
+  .section p:last-child {
+    margin-bottom: 0;
+  }
+</style>

@@ -1,0 +1,128 @@
+---
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+---
+
+<MarketingLayout
+  title="Download"
+  description="Install BeekeeperML on your home lab server in minutes."
+>
+  <div class="page">
+    <div class="page-inner">
+      <h1>Get BeekeeperML</h1>
+
+      <section class="section">
+        <h2>Requirements</h2>
+        <ul>
+          <li>Python 3.10+</li>
+          <li>Git</li>
+          <li>Linux server with systemd (tested on Ubuntu)</li>
+          <li>GPU optional but recommended</li>
+        </ul>
+      </section>
+
+      <section class="section">
+        <h2>Install</h2>
+        <p>
+          Clone the repo and run the setup script. It creates a virtual environment,
+          installs dependencies, and registers a systemd service.
+        </p>
+        <pre><code>git clone https://github.com/bobcowher/beekeeper.git
+cd beekeeper
+bash setup.sh</code></pre>
+        <p>
+          Once complete, BeekeeperML is running on port 5000.
+          Open <code>http://your-server:5000</code> in a browser.
+        </p>
+      </section>
+
+      <section class="section">
+        <h2>Connect an AI agent (MCP)</h2>
+        <p>Install the MCP server:</p>
+        <pre><code>pip install beekeeper-mcp</code></pre>
+        <p>Register it with Claude Code:</p>
+        <pre><code>claude mcp add beekeeper -s user \
+  -e BEEKEEPER_HOST=http://your-server:5000 \
+  -- beekeeper-mcp</code></pre>
+        <p>
+          If auth is enabled on your server, add
+          <code>-e BEEKEEPER_API_KEY=your-key</code> before <code>--</code>.
+        </p>
+      </section>
+
+      <section class="section">
+        <a href="/docs/getting-started" class="btn btn-primary">Full setup guide →</a>
+      </section>
+    </div>
+  </div>
+</MarketingLayout>
+
+<style>
+  .page {
+    padding: 4rem 2rem;
+  }
+
+  .page-inner {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  h1 {
+    font-size: 2.25rem;
+    font-weight: 700;
+    margin: 0 0 2.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  .section {
+    margin-bottom: 3rem;
+  }
+
+  .section h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 1rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 2px solid var(--color-accent);
+    display: inline-block;
+  }
+
+  .section ul {
+    padding-left: 1.25rem;
+    line-height: 2;
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+
+  .section p {
+    color: var(--color-text-muted);
+    line-height: 1.7;
+    margin: 0 0 0.75rem;
+  }
+
+  pre {
+    background: #1a1a1a;
+    color: #f0f0f0;
+    padding: 1.25rem 1.5rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    margin: 0.75rem 0 1rem;
+    font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+  }
+
+  code {
+    font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+    font-size: 0.875em;
+    background: #f0f0f0;
+    padding: 0.15em 0.4em;
+    border-radius: 3px;
+  }
+
+  pre code {
+    background: none;
+    padding: 0;
+    font-size: inherit;
+    color: inherit;
+  }
+</style>
