@@ -1,0 +1,63 @@
+:root {
+  --color-bg: #ffffff;
+  --color-bg-alt: #f8f8f8;
+  --color-text: #1a1a1a;
+  --color-text-muted: #666666;
+  --color-accent: #e8b931;
+  --color-accent-dark: #c9a020;
+  --color-border: #e5e5e5;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --max-width: 1100px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--font-sans);
+  background: var(--color-bg);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.75rem 1.75rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: opacity 0.15s;
+  cursor: pointer;
+}
+
+.btn:hover {
+  opacity: 0.85;
+}
+
+.btn-primary {
+  background: var(--color-accent);
+  color: #1a1a1a;
+}
+
+.btn-secondary {
+  background: #1a1a1a;
+  color: #ffffff;
+}
