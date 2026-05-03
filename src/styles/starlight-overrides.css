@@ -53,13 +53,13 @@ starlight-theme-select {
   display: none;
 }
 
-/* Center splash page hero — override Starlight's wide-screen left-align */
-.hero .stack { text-align: center; }
+/* Center splash page hero — override Starlight's two-column grid (stack + image slot) */
+.hero .stack { grid-column: 1 / -1; text-align: center; }
 .hero .copy { align-items: center; }
 .hero .actions { justify-content: center; }
 
 @media (min-width: 50rem) {
-  .hero .stack { text-align: center !important; }
+  .hero .stack { grid-column: 1 / -1 !important; text-align: center !important; }
   .hero .copy { align-items: center !important; }
   .hero .actions { justify-content: center !important; }
 }
