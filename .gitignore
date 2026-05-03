@@ -22,3 +22,12 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# superpowers brainstorming sessions
+.superpowers/
+
+# playwright test output (diff images on failure)
+test-results/
+
+# playwright HTML reports
+playwright-report/
