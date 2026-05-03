@@ -1,5 +1,71 @@
-:root {
-  --sl-color-accent: #e8b931;
-  --sl-color-accent-low: #fdf3d0;
+/* Pull in Inter to match the marketing site */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/*
+ * Force light mode regardless of OS preference.
+ * Starlight's light mode inverts the gray scale: --sl-color-black becomes white,
+ * --sl-color-white becomes near-black. Apply light values to both :root (dark default)
+ * and [data-theme='dark'] so both render identically.
+ */
+:root,
+[data-theme='dark'] {
+  --sl-color-white:  hsl(224, 10%, 10%);
+  --sl-color-gray-1: hsl(224, 14%, 16%);
+  --sl-color-gray-2: hsl(224, 10%, 23%);
+  --sl-color-gray-3: hsl(224,  7%, 36%);
+  --sl-color-gray-4: hsl(224,  6%, 56%);
+  --sl-color-gray-5: hsl(224,  6%, 77%);
+  --sl-color-gray-6: hsl(224, 20%, 94%);
+  --sl-color-gray-7: hsl(224, 19%, 97%);
+  --sl-color-black:  hsl(0, 0%, 100%);
+
+  --sl-color-text:        var(--sl-color-gray-2);
+  --sl-color-text-invert: var(--sl-color-black);
+  --sl-color-bg:          var(--sl-color-black);
+  --sl-color-bg-nav:      #ffffff;
+  --sl-color-bg-sidebar:  var(--sl-color-bg);
+  --sl-color-bg-inline-code: var(--sl-color-gray-6);
+  --sl-color-hairline-light: var(--sl-color-gray-6);
+  --sl-color-hairline:       var(--sl-color-gray-6);
+  --sl-color-hairline-shade: var(--sl-color-gray-6);
+}
+
+/* Accent — yellow from the marketing palette, works for both modes now */
+:root,
+:root[data-theme='light'],
+[data-theme='dark'] {
+  --sl-color-accent-low:  #fdf3d0;
+  --sl-color-accent:      #e8b931;
   --sl-color-accent-high: #c9a020;
+  --sl-color-text-accent: #c9a020;
+
+  --sl-font: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* Force header to pure white — Starlight's [data-theme='light'] specificity overrides :root */
+:root[data-theme='light'],
+header.header {
+  --sl-color-bg-nav: #ffffff;
+}
+
+/* Hide the theme toggle — there's only one theme */
+starlight-theme-select {
+  display: none;
+}
+
+/* Center splash page hero — override Starlight's wide-screen left-align */
+.hero .stack { text-align: center; }
+.hero .copy { align-items: center; }
+.hero .actions { justify-content: center; }
+
+@media (min-width: 50rem) {
+  .hero .stack { text-align: center !important; }
+  .hero .copy { align-items: center !important; }
+  .hero .actions { justify-content: center !important; }
+}
+
+/* Code blocks — keep dark for contrast, matching the marketing download page */
+.sl-markdown-content pre {
+  background: #1a1a1a !important;
+  border-radius: 8px;
 }

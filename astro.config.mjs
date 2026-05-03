@@ -16,6 +16,10 @@ export default defineConfig({
         { label: 'MCP Server', slug: 'docs/mcp-server' },
         { label: 'API Reference', slug: 'docs/api-reference' },
       ],
+      components: {
+        SiteTitle: './src/components/docs/SiteTitle.astro',
+        SocialIcons: './src/components/docs/SocialIcons.astro',
+      },
       customCss: ['./src/styles/starlight-overrides.css'],
     }),
   ],
