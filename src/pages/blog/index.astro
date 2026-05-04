@@ -11,6 +11,7 @@ const posts = (await getCollection('blog')).sort(
   <div class="page">
     <div class="page-inner">
       <div class="layout">
+        <div></div>
         <div>
           <h1>Blog</h1>
           <div class="post-list">
@@ -56,13 +57,13 @@ const posts = (await getCollection('blog')).sort(
   }
 
   .page-inner {
-    max-width: var(--max-width);
+    max-width: 1360px;
     margin: 0 auto;
   }
 
   .layout {
     display: grid;
-    grid-template-columns: 1fr 280px;
+    grid-template-columns: 240px 1fr 240px;
     gap: 3rem;
     align-items: start;
   }
@@ -87,6 +88,7 @@ const posts = (await getCollection('blog')).sort(
     text-decoration: none;
     color: inherit;
     padding: 1rem;
+    background: var(--color-bg);
     border: 1px solid var(--color-border);
     border-radius: 8px;
     transition: border-color 0.15s;
@@ -139,7 +141,7 @@ const posts = (await getCollection('blog')).sort(
   }
 
   .about-box {
-    background: var(--color-bg-alt);
+    background: var(--color-bg);
     border: 1px solid var(--color-border);
     border-radius: 8px;
     padding: 1.25rem;
