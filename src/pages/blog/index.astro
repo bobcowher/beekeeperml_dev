@@ -10,29 +10,40 @@ const posts = (await getCollection('blog')).sort(
 <MarketingLayout title="Blog" description="Dev logs and updates from the BeekeeperML project.">
   <div class="page">
     <div class="page-inner">
-      <h1>Blog</h1>
-      <div class="post-list">
-        {posts.map(post => (
-          <a href={`/blog/${post.slug}`} class="post-row">
-            {post.data.youtubeId && (
-              <div class="thumb">
-                <img
-                  src={`https://img.youtube.com/vi/${post.data.youtubeId}/hqdefault.jpg`}
-                  alt={post.data.title}
-                  width="160"
-                  height="90"
-                />
-              </div>
-            )}
-            <div class="post-text">
-              <span class="post-date">
-                {post.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}
-              </span>
-              <span class="post-title">{post.data.title}</span>
-              <span class="post-desc">{post.data.description}</span>
-            </div>
-          </a>
-        ))}
+      <div class="layout">
+        <div>
+          <h1>Blog</h1>
+          <div class="post-list">
+            {posts.map(post => (
+              <a href={`/blog/${post.slug}`} class="post-row">
+                {post.data.youtubeId && (
+                  <div class="thumb">
+                    <img
+                      src={`https://img.youtube.com/vi/${post.data.youtubeId}/hqdefault.jpg`}
+                      alt={post.data.title}
+                      width="160"
+                      height="90"
+                    />
+                  </div>
+                )}
+                <div class="post-text">
+                  <span class="post-date">
+                    {post.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}
+                  </span>
+                  <span class="post-title">{post.data.title}</span>
+                  <span class="post-desc">{post.data.description}</span>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+        <aside class="sidebar">
+          <div class="about-box">
+            <div class="about-label">About this blog</div>
+            <p>Building BeekeeperML in public — a home lab ML training manager with an agent-first API.</p>
+            <p>Right now it's dev logs. Eventually: tutorials, demos, and guides.</p>
+          </div>
+        </aside>
       </div>
     </div>
   </div>
@@ -44,14 +55,21 @@ const posts = (await getCollection('blog')).sort(
   }
 
   .page-inner {
-    max-width: 720px;
+    max-width: var(--max-width);
     margin: 0 auto;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 3rem;
+    align-items: start;
   }
 
   h1 {
     font-size: 2.25rem;
     font-weight: 700;
-    margin: 0 0 2.5rem;
+    margin: 0 0 2rem;
     letter-spacing: -0.02em;
   }
 
@@ -112,5 +130,37 @@ const posts = (await getCollection('blog')).sort(
     font-size: 0.875rem;
     color: var(--color-text-muted);
     line-height: 1.6;
+  }
+
+  .sidebar {
+    position: sticky;
+    top: 2rem;
+  }
+
+  .about-box {
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 1.25rem;
+  }
+
+  .about-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .about-box p {
+    font-size: 0.875rem;
+    color: var(--color-text);
+    line-height: 1.7;
+    margin: 0 0 0.75rem;
+  }
+
+  .about-box p:last-child {
+    margin-bottom: 0;
   }
 </style>

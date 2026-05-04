@@ -13,62 +13,99 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 const { Content } = await post.render();
 const { title, date, description, youtubeId } = post.data;
+
+const allPosts = (await getCollection('blog')).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
+const otherPosts = allPosts.filter((p) => p.slug !== post.slug);
 ---
 
 <MarketingLayout title={title} description={description}>
   <div class="page">
-    <div class="page-inner">
-      <h1>{title}</h1>
-      <p class="post-date">
-        {date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}
-      </p>
-      {youtubeId && (
-        <div class="video-wrapper">
-          <iframe
-            src={`https://www.youtube.com/embed/${youtubeId}`}
-            title={title}
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-          />
+    <div class="post-header">
+      <div class="header-inner">
+        <a href="/blog" class="back-link">← Blog</a>
+        <h1>{title}</h1>
+        {youtubeId && (
+          <div class="video-wrapper">
+            <iframe
+              src={`https://www.youtube.com/embed/${youtubeId}`}
+              title={title}
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
+            />
+          </div>
+        )}
+      </div>
+    </div>
+    <div class="body-section">
+      <div class="body-inner">
+        <div class="post-body">
+          <Content />
         </div>
-      )}
-      <div class="post-body">
-        <Content />
+        <aside class="sidebar">
+          <div class="sidebar-box">
+            <div class="sidebar-label">Published</div>
+            <div class="sidebar-date">
+              {date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}
+            </div>
+            {otherPosts.length > 0 && (
+              <div class="other-posts-section">
+                <div class="sidebar-label">Other posts</div>
+                <div class="other-posts">
+                  {otherPosts.map(p => (
+                    <a href={`/blog/${p.slug}`} class="other-post-link">
+                      {p.data.title}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </aside>
       </div>
     </div>
   </div>
 </MarketingLayout>
 
 <style>
-  .page {
-    padding: 4rem 2rem;
+  .post-header {
+    background: #1a1a1a;
+    padding: 3rem 2rem 2.5rem;
   }
 
-  .page-inner {
-    max-width: 720px;
+  .header-inner {
+    max-width: var(--max-width);
     margin: 0 auto;
+  }
+
+  .back-link {
+    display: inline-block;
+    font-size: 0.8rem;
+    color: #9ca3af;
+    text-decoration: none;
+    margin-bottom: 1rem;
+    transition: color 0.15s;
+  }
+
+  .back-link:hover {
+    color: var(--color-accent);
   }
 
   h1 {
     font-size: 2rem;
     font-weight: 700;
-    margin: 0 0 0.5rem;
+    color: #ffffff;
+    margin: 0 0 1.5rem;
     letter-spacing: -0.02em;
     line-height: 1.2;
-  }
-
-  .post-date {
-    font-size: 0.875rem;
-    color: var(--color-text-muted);
-    margin: 0 0 1.75rem;
   }
 
   .video-wrapper {
     position: relative;
     padding-bottom: 56.25%;
     height: 0;
-    margin-bottom: 2rem;
     border-radius: 8px;
     overflow: hidden;
   }
@@ -82,10 +119,24 @@ const { title, date, description, youtubeId } = post.data;
     border: 0;
   }
 
+  .body-section {
+    padding: 3rem 2rem;
+  }
+
+  .body-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 240px;
+    gap: 3rem;
+    align-items: start;
+  }
+
   .post-body {
-    color: var(--color-text-muted);
+    color: var(--color-text);
     line-height: 1.8;
     font-size: 1rem;
+    min-width: 0;
   }
 
   .post-body p {
@@ -94,5 +145,53 @@ const { title, date, description, youtubeId } = post.data;
 
   .post-body p:last-child {
     margin-bottom: 0;
+  }
+
+  .sidebar {
+    position: sticky;
+    top: 2rem;
+  }
+
+  .sidebar-box {
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 1.25rem;
+  }
+
+  .sidebar-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .sidebar-date {
+    font-size: 0.875rem;
+    color: var(--color-text);
+  }
+
+  .other-posts-section {
+    margin-top: 1.25rem;
+  }
+
+  .other-posts {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .other-post-link {
+    font-size: 0.8rem;
+    color: var(--color-accent);
+    text-decoration: none;
+    line-height: 1.4;
+    transition: opacity 0.15s;
+  }
+
+  .other-post-link:hover {
+    opacity: 0.75;
   }
 </style>
