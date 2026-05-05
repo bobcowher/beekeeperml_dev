@@ -20,6 +20,7 @@ From the dashboard, click **+ New Project** and fill in:
 | Setup Script | Optional shell script run at setup and before each training run | — |
 | Data Dir (local) | Local path in the repo to symlink to your data volume | `data` |
 | Data Dir (system) | Absolute path on the server to a persistent data volume | — |
+| Output Paths to Save | Workspace-relative directories to preserve in persistent storage across workspace cleanups | — |
 
 Every field has a tooltip — hover the **?** icon for a description.
 
@@ -43,6 +44,7 @@ Click **Edit** on the project page to change:
 - Requirements file
 - Setup script
 - Data directory (local and system paths)
+- Output paths to save
 - Environment variables
 - Parallel runs settings
 
@@ -89,6 +91,23 @@ For projects that need access to a large persistent dataset stored elsewhere on 
 BeekeeperML creates a symlink at `workspace/<local>` → `<system path>` during project setup, and ensures it exists again before each training run. Your training script just reads from `data/` as if the dataset lived inside the repo.
 
 Leave the system path blank if you don't need this feature.
+
+## Saved Outputs
+
+When parallel runs are enabled, each run gets a fresh workspace clone. The **Output Paths to Save** field lets you list workspace-relative directories (one per line) that are symlinked into durable storage outside the disposable workspace.
+
+Each run gets its own directory under `projects/<name>/persistent/runs/run_<id>/`. Symlinks are created before training starts, so your script writes to the normal path and the files persist automatically.
+
+TensorBoard logs are handled separately — no need to list them here.
+
+BeekeeperML injects two environment variables into every training process:
+
+| Variable | Value |
+|----------|-------|
+| `BEEKEEPER_RUN_DIR` | Absolute path to this run's persistent directory |
+| `BEEKEEPER_TENSORBOARD_DIR` | Absolute path to this run's TB log directory |
+
+You can read these directly in your training script for explicit control over where files land.
 
 ## Viewing and Downloading Files
 

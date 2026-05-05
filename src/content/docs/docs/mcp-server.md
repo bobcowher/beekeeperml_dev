@@ -53,6 +53,7 @@ Add to `~/.claude/claude_desktop_config.json`:
 
 | Tool | Description |
 |------|-------------|
+| `get_version` | Check MCP/server version compatibility — call this at session start |
 | `list_projects` | List all projects and their status |
 | `get_project` | Full project detail including current run state |
 | `get_project_instructions` | Per-project agent instructions (goals, metrics, notes) |
@@ -60,12 +61,13 @@ Add to `~/.claude/claude_desktop_config.json`:
 | `start_training` | Start a run, optionally specifying a branch |
 | `stop_training` | Stop a specific run by ID |
 | `get_logs` | Tail the log for a run |
-| `analyze_run` | Episode analysis from logs — trend, averages, quartiles |
+| `analyze_run` | Synthesized analysis of a run: TensorBoard metrics + log tail |
 | `get_stats` | System GPU/CPU/memory stats |
+| `get_capacity` | Training slot capacity: total, running, and available headroom |
 | `list_branches` | List remote branches for a project |
 | `switch_branch` | Change the project's active branch |
-| `check_busy` | Check if the server is busy before starting a new job |
-| `create_project` | Create a new project |
+| `check_busy` | Check if the server is busy (prefer `get_capacity` for new workflows) |
+| `create_project` | Create a new project, with optional `output_paths` for persistent artifact storage |
 | `delete_project` | Delete a project |
 | `retry_setup` | Retry a failed project setup |
 

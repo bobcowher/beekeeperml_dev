@@ -111,6 +111,20 @@ If the run produced a log, a **Log** link appears in the Actions column. Logs ar
 
 The **Cleanup Old Runs** button removes old run records, keeping the most recent N runs (configurable). Starred runs are never pruned. **Clear All History** removes all run records for the project.
 
+## Artifact Storage
+
+BeekeeperML provides every training process with a durable storage location outside the disposable workspace. Three environment variables are injected automatically:
+
+| Variable | Value |
+|----------|-------|
+| `BEEKEEPER_RUN_DIR` | Per-run persistent directory: `projects/<name>/persistent/runs/run_<id>/` |
+| `BEEKEEPER_TENSORBOARD_DIR` | TB log directory inside `BEEKEEPER_RUN_DIR` |
+| `TENSORBOARD_LOG_DIR` | Same as `BEEKEEPER_TENSORBOARD_DIR` (for scripts that read this convention) |
+
+If you configured **Output Paths to Save** when creating the project, BeekeeperML creates symlinks from those workspace paths into `BEEKEEPER_RUN_DIR` before training starts — your script writes to the usual relative path and the files land in persistent storage.
+
+For direct control, read `BEEKEEPER_RUN_DIR` in your training script and write checkpoints there explicitly.
+
 ## Notes
 
 - Training processes are fully detached — they survive browser disconnects, but not server reboots. After a reboot, the systemd service restarts BeekeeperML, but any previously running training jobs will need to be restarted from the UI.
