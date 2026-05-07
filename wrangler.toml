@@ -1,0 +1,5 @@
+name = "beekeeperml"
+compatibility_date = "2025-05-07"
+
+[assets]
+directory = "./dist"
