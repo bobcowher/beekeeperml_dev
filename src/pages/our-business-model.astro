@@ -41,10 +41,7 @@ import MarketingLayout from '../layouts/MarketingLayout.astro';
           Organizations with over $1 million in annual revenue, or anyone offering BeekeeperML
           to third parties on a hosted or embedded basis, must reach out to discuss a commercial license.
         </p>
-        <p>
-          On <strong>May 8, 2030</strong>, the license automatically converts to the Apache License 2.0 —
-          fully open source, no strings attached.
-        </p>
+
       </section>
 
     </div>
@@ -88,6 +85,21 @@ import MarketingLayout from '../layouts/MarketingLayout.astro';
   }
 
   .section p:last-child {
+    margin-bottom: 0;
+  }
+
+  .section ul {
+    color: var(--color-text-muted);
+    line-height: 1.8;
+    margin: 0;
+    padding-left: 1.25rem;
+  }
+
+  .section li {
+    margin-bottom: 0.75rem;
+  }
+
+  .section li:last-child {
     margin-bottom: 0;
   }
 </style>
