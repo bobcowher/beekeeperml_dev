@@ -9,7 +9,7 @@ Once setup completes, the **Training** section appears on the project page. A br
 
 BeekeeperML runs the following sequence before launching your script:
 
-1. **Git pull** — pulls the latest code from the selected branch
+1. **Git sync** — fetches from origin and resets the workspace to `origin/<branch>` (local changes are discarded)
 2. **Data dir symlink** — verifies or creates the symlink if a data directory is configured
 3. **Setup script** — runs your setup script if configured and present
 4. **Pip install** — installs/updates packages from the requirements file

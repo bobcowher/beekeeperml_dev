@@ -16,6 +16,7 @@ Full interactive reference: `http://your-server:5000/api/v1/docs`
 
 | Action | Method | Endpoint |
 |--------|--------|----------|
+| Version | GET | `/api/v1/version` |
 | List projects | GET | `/api/v1/projects` |
 | Create project | POST | `/api/v1/projects` |
 | Project detail | GET | `/api/v1/projects/<name>` |

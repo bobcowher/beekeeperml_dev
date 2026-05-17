@@ -14,7 +14,9 @@ pip install beekeeper-mcp
 Or run it directly from the repo without installing:
 
 ```bash
-python /path/to/beekeeper/mcp_server.py
+cd /path/to/beekeeper
+source venv/bin/activate
+python -m beekeeper_mcp
 ```
 
 ## Register with Claude Code
@@ -68,6 +70,7 @@ Add to `~/.claude/claude_desktop_config.json`:
 | `switch_branch` | Change the project's active branch |
 | `check_busy` | Check if the server is busy (prefer `get_capacity` for new workflows) |
 | `create_project` | Create a new project, with optional `output_paths` for persistent artifact storage |
+| `update_project` | Update project settings (branch, train file, TB dir, env vars, parallel runs, etc.) |
 | `delete_project` | Delete a project |
 | `retry_setup` | Retry a failed project setup |
 
