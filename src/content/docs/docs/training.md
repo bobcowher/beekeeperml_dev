@@ -105,7 +105,9 @@ The filter bar above the table has two controls:
 
 ### Log Archive
 
-If the run produced a log, a **Log** link appears in the Actions column. Logs are kept independently of the run history — archived logs persist until manually deleted.
+If the run produced a log, a **Log** link appears in the Actions column. It opens a terminal-style viewer with a download button. Logs are kept independently of the run history — archived logs persist until manually deleted. Every run has its own log file, including runs that fail before the training script starts (a bad script path or a failed `pip install`), so the reason for a failure is always readable.
+
+The **Artifacts** button next to it browses that run's persistent storage directly.
 
 ### Pruning
 

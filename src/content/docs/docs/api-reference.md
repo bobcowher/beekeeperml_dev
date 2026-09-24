@@ -20,6 +20,8 @@ Full interactive reference: `http://your-server:5000/api/v1/docs`
 | List projects | GET | `/api/v1/projects` |
 | Create project | POST | `/api/v1/projects` |
 | Project detail | GET | `/api/v1/projects/<name>` |
+| Update settings | PATCH | `/api/v1/projects/<name>` |
+| Rename project | POST | `/api/v1/projects/<name>/rename` |
 | Delete project | DELETE | `/api/v1/projects/<name>` |
 | Retry setup | POST | `/api/v1/projects/<name>/setup/retry` |
 | Start training | POST | `/api/v1/projects/<name>/training/start` |
@@ -31,10 +33,12 @@ Full interactive reference: `http://your-server:5000/api/v1/docs`
 | Run history | GET | `/api/v1/projects/<name>/runs` |
 | List branches | GET | `/api/v1/projects/<name>/branches` |
 | Switch branch | POST | `/api/v1/projects/<name>/branch` |
+| Run artifacts | GET | `/api/v1/projects/<name>/runs/<run_id\|latest>/files` |
 | List files | GET | `/api/v1/projects/<name>/files` |
 | Download file | GET | `/api/v1/projects/<name>/files/<path>` |
 | Busy check | GET | `/api/v1/busy` |
 | System stats | GET | `/api/v1/stats` |
+| Capacity | GET | `/api/v1/capacity` |
 
 ## Starting a Training Run
 

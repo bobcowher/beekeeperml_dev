@@ -64,13 +64,14 @@ Add to `~/.claude/claude_desktop_config.json`:
 | `stop_training` | Stop a specific run by ID |
 | `get_logs` | Tail the log for a run |
 | `analyze_run` | Synthesized analysis of a run: TensorBoard metrics + log tail |
-| `get_stats` | System GPU/CPU/memory stats |
-| `get_capacity` | Training slot capacity: total, running, and available headroom |
+| `get_stats` | System GPU/CPU/memory stats, plus GPU driver version and the max CUDA version it supports |
+| `get_capacity` | Training slot capacity (total, running, available), resource load, and the same GPU platform info |
 | `list_branches` | List remote branches for a project |
 | `switch_branch` | Change the project's active branch |
 | `check_busy` | Check if the server is busy (prefer `get_capacity` for new workflows) |
 | `create_project` | Create a new project, with optional `output_paths` for persistent artifact storage |
-| `update_project` | Update project settings (branch, train file, TB dir, env vars, parallel runs, etc.) |
+| `update_project` | Update project settings (branch, train file, TB dir, env vars, data directory, GPU management, etc.) |
+| `rename_project` | Rename a project; run history moves with it |
 | `delete_project` | Delete a project |
 | `retry_setup` | Retry a failed project setup |
 

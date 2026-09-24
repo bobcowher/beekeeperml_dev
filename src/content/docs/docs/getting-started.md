@@ -79,7 +79,7 @@ See [MCP Server](/docs/mcp-server/) for full setup details.
 
 ## Current Limitations
 
-- **GitHub auth** — BeekeeperML has no method of authenticating with private repos. It only works with public repositories.
+- **Git auth** — Private repositories work over SSH only. Use an SSH-form Git URL (`git@github.com:you/repo.git`) and add BeekeeperML's public key to GitHub — see [SSH Key](/docs/projects/#ssh-key-for-private-repositories). HTTPS credentials are not supported.
 - **HTTPS** — For HTTPS, put BeekeeperML behind a reverse proxy. It's not ready to handle anything sensitive without one.
 - **Multi-server** — Single-server product. A central Hive managing multiple workers is planned for the future.
 

@@ -10,7 +10,7 @@ From the dashboard, click **+ New Project** and fill in:
 | Field | Description | Default |
 |-------|-------------|---------|
 | Project Name | No spaces, used as the directory name | — |
-| Git URL | Public Git repository URL | — |
+| Git URL | HTTPS URL for a public repo, or an SSH URL (`git@github.com:you/repo.git`) for a private one — see [SSH Key](#ssh-key-for-private-repositories) | — |
 | Branch | Git branch to clone and pull before each run | `main` |
 | Python Version | Detected from system and conda | auto |
 | Environment Type | venv or conda | `venv` |
@@ -21,6 +21,7 @@ From the dashboard, click **+ New Project** and fill in:
 | Data Dir (local) | Local path in the repo to symlink to your data volume | `data` |
 | Data Dir (system) | Absolute path on the server to a persistent data volume | — |
 | Output Paths to Save | Workspace-relative directories to preserve in persistent storage across workspace cleanups | — |
+| Environment Variables | Key-value pairs passed to the training process (optional — can also be added later via Edit) | — |
 
 Every field has a tooltip — hover the **?** icon for a description.
 
@@ -47,12 +48,25 @@ Click **Edit** on the project page to change:
 - Output paths to save
 - Environment variables
 - Parallel runs settings
+- GPU memory management
 
-Name, Git URL, Python version, and environment type are fixed after creation.
+Git URL, Python version, and environment type are fixed after creation. Use the **Rename Project** card at the bottom of the Edit page to change the name — run history moves with it. Rename is blocked while setup or training is active.
 
 ## Environment Variables
 
-Training scripts often need environment variables — API keys, config flags, hyperparameters. Click **Edit** on the project info card to add key-value pairs. These are passed to the training process at startup.
+Training scripts often need environment variables — API keys, config flags, hyperparameters. Add key-value pairs when creating the project, or click **Edit** on the project info card later. These are passed to the training process at startup.
+
+## SSH Key for Private Repositories
+
+BeekeeperML generates its own SSH keypair (ed25519, no passphrase) the first time it starts. Every Git clone and fetch uses it, so a private repository works once the public key is registered with GitHub.
+
+1. Open **Admin → SSH Key** and copy the public key.
+2. In GitHub, add it under **Settings → SSH and GPG keys** (account-wide access), or as a **Deploy key** on a single repository.
+3. Create the project with an SSH-form URL such as `git@github.com:you/repo.git`.
+
+If setup fails with `Permission denied (publickey)`, the project page links straight to the key. **Regenerate** on the same page replaces the keypair — add the new public key to GitHub afterward, since projects using the old key will fail to clone or fetch until you do.
+
+Hosts you haven't connected to before are trusted on first contact. A host whose key later changes is still rejected.
 
 ## Setup Script
 
@@ -90,7 +104,35 @@ For projects that need access to a large persistent dataset stored elsewhere on 
 
 BeekeeperML creates a symlink at `workspace/<local>` → `<system path>` during project setup, and ensures it exists again before each training run. Your training script just reads from `data/` as if the dataset lived inside the repo.
 
-Leave the system path blank if you don't need this feature.
+Leave the system path blank if you don't need this feature. The data directory can also be set on an existing project through the Edit page, the API (`PATCH /api/v1/projects/<name>`), or the MCP `update_project` tool; the symlink is created immediately if the workspace already exists.
+
+## GPU Memory Management
+
+Opt-in per project, under **Edit → GPU Memory Management**. When enabled, BeekeeperML checks free VRAM before each run and picks the GPU with the most free memory.
+
+| Field | Purpose |
+|-------|---------|
+| Minimum (MB) | Hard floor. The run is rejected if the best GPU has less free VRAM than this. `0` disables the check. |
+| Preferred (MB) | Full allocation including memory your script can offload (replay buffers, for example). |
+
+These variables are injected into the training process:
+
+| Variable | Value |
+|----------|-------|
+| `CUDA_VISIBLE_DEVICES` | Index of the selected GPU, so your script always sees it as `cuda:0` |
+| `CUDA_DEVICE_ORDER` | Always `PCI_BUS_ID`, so the index matches `nvidia-smi` |
+| `GPU_DEVICE` | `cuda:0` — use it directly with `torch.device()` |
+| `GPU_MEMORY_FREE` | MB free on the selected GPU at launch |
+| `GPU_MEMORY_MINIMUM` / `GPU_MEMORY_PREFERRED` | Copied from the project settings |
+| `GPU_OFFLOAD` | `1` if free VRAM is below preferred, otherwise `0` |
+
+A typical script pattern:
+
+```python
+buffer_device = "cpu" if os.environ.get("GPU_OFFLOAD") == "1" else "cuda"
+```
+
+These variables are reserved while GPU management is on — a project environment variable with the same name is overridden.
 
 ## Saved Outputs
 
