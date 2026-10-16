@@ -5,7 +5,9 @@ description: Running, monitoring, and managing training runs in BeekeeperML.
 
 ## Running Training
 
-Once setup completes, the **Training** section appears on the project page. A branch picker is visible immediately — select the branch you want to train from and click **Start**.
+Once setup completes, the **Training** section appears on the project page. Pick the branch you want to train from and click **Start**.
+
+Branch names are checked before anything runs. Names starting with `-`, or containing spaces, `..`, `@{`, or any of `~^:?*[\`, or ending in `.lock` or `/`, are refused. Git wouldn't accept most of those anyway, and a name starting with `-` could get read by git as an option.
 
 BeekeeperML runs the following sequence before launching your script:
 
@@ -43,7 +45,23 @@ By default, BeekeeperML allows one run at a time per project. To run multiple br
 
 When parallel runs are enabled, a **+ Start Run…** button appears below the active run list. Each parallel run gets its own full clone of the repository in a temporary workspace, its own log file, and its own Tensorboard instance. Completed parallel run workspaces are cleaned up automatically.
 
-Each run is tracked by a **Run ID** — a unique integer assigned at start. The ID appears in the run row, in the log file header, and in the run history table.
+Each run gets a **Run ID**, which is just the project's run number. A project's first run is 1, the next is 2, and so on, and each project counts on its own. The ID shows up in the run row, the log file header, and the run history table.
+
+When you need to refer to a run outside its project, use the **run ref**, the project name and run number together, like `mnist-12`. That's what pipelines, the dashboard and the API use.
+
+If you're upgrading from v1.1.0 or earlier, run IDs used to count across the whole server. The first startup on the new version renumbers your existing runs per project, in the order they started, and renames their `run_<id>` folders to match. If a training process is still running when that happens, the rename waits until it's done.
+
+## Run Queue
+
+When a project can't start a run right now, the **Start** button turns into **Add to Queue**. That happens when a run is already going and parallel runs are off, when you're at the parallel run limit, or when there isn't enough free GPU memory.
+
+Queued runs start on their own, oldest first, as soon as the project has room. Beekeeper checks every few seconds. The queue is per project, so a busy project doesn't hold up the others.
+
+The **Queued** list on the project page shows each waiting run with its position, its branch, and its environment variables (handy when you've queued the same branch three times with different settings). If the run is waiting on something, like GPU memory, the reason is shown above the list. Runs queued by a [pipeline](/docs/pipelines/) link back to it. Click **Cancel** on a run to take it out of the queue.
+
+If a queued run can't ever start, say the project's setup failed, it's dropped from the queue with an error and the next one moves up.
+
+The dashboard has a **Queued** card too, so you can see everything that's waiting across all your projects.
 
 ## Switching Branches
 
@@ -68,7 +86,7 @@ Each project tracks its training runs. Expand the **Run History** section to see
 
 Each row shows:
 
-- **Run ID** (`#N`) — unique identifier, matches the ID shown in the active run list and log headers
+- **Run ID** (`#N`) — the project's run number, matching the active run list and log headers
 - **Started** — timestamp
 - **Duration** — wall-clock time
 - **Status** — `completed`, `crashed`, or `canceled`
@@ -122,6 +140,8 @@ BeekeeperML provides every training process with a durable storage location outs
 | `BEEKEEPER_RUN_DIR` | Per-run persistent directory: `projects/<name>/persistent/runs/run_<id>/` |
 | `BEEKEEPER_TENSORBOARD_DIR` | TB log directory inside `BEEKEEPER_RUN_DIR` |
 | `TENSORBOARD_LOG_DIR` | Same as `BEEKEEPER_TENSORBOARD_DIR` (for scripts that read this convention) |
+| `BEEKEEPER_RUN_ID` | The run number, like `12` |
+| `BEEKEEPER_RUN_REF` | The run ref, like `mnist-12` |
 
 If you configured **Output Paths to Save** when creating the project, BeekeeperML creates symlinks from those workspace paths into `BEEKEEPER_RUN_DIR` before training starts — your script writes to the usual relative path and the files land in persistent storage.
 

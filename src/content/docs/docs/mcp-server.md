@@ -51,29 +51,78 @@ Add this to `claude_desktop_config.json`. On macOS it lives in `~/Library/Applic
 }
 ```
 
+## Upgrading
+
+The server and the MCP package are versioned separately. This release of BeekeeperML needs `beekeeper-mcp` 0.5.0 or newer. An older version will still connect, but it won't have the pipeline, folder or queue tools, and it doesn't know about the changes to run IDs and the busy check. Upgrade with:
+
+```bash
+pip install -U beekeeper-mcp
+```
+
+The `get_version` tool tells you if you're behind. It's a good idea to have your agent call it at the start of a session.
+
 ## Available Tools
+
+### Projects
 
 | Tool | Description |
 |------|-------------|
-| `get_version` | Check MCP/server version compatibility — call this at session start |
-| `list_projects` | List all projects and their status |
+| `get_version` | Check MCP/server version compatibility. Call this at session start. |
+| `list_projects` | List projects and their status. Takes an optional `folder` to filter on. |
 | `get_project` | Full project detail including current run state |
 | `get_project_instructions` | Per-project agent instructions (goals, metrics, notes) |
-| `training_status` | Current runs for a project |
-| `start_training` | Start a run, optionally specifying a branch |
-| `stop_training` | Stop a specific run by ID |
-| `get_logs` | Tail the log for a run |
-| `analyze_run` | Synthesized analysis of a run: TensorBoard metrics + log tail |
-| `get_stats` | System GPU/CPU/memory stats, plus GPU driver version and the max CUDA version it supports |
-| `get_capacity` | Training slot capacity (total, running, available), resource load, and the same GPU platform info |
+| `create_project` | Create a project, with optional `output_paths` and `folder` |
+| `update_project` | Update project settings: branch, train file, TB dir, env vars, data directory, GPU management, folder, and so on |
+| `rename_project` | Rename a project. Run history moves with it. |
+| `delete_project` | Delete a project. Refused while one of its runs is starting or running. |
+| `retry_setup` | Retry a failed project setup |
 | `list_branches` | List remote branches for a project |
 | `switch_branch` | Change the project's active branch |
-| `check_busy` | Check if the server is busy (prefer `get_capacity` for new workflows) |
-| `create_project` | Create a new project, with optional `output_paths` for persistent artifact storage |
-| `update_project` | Update project settings (branch, train file, TB dir, env vars, data directory, GPU management, etc.) |
-| `rename_project` | Rename a project; run history moves with it |
-| `delete_project` | Delete a project |
-| `retry_setup` | Retry a failed project setup |
+
+### Training
+
+| Tool | Description |
+|------|-------------|
+| `start_training` | Start a run, with optional `branch` and `env_vars`. Pass `queue=True` to add it to the project's run queue instead. |
+| `training_status` | Current runs for a project |
+| `stop_training` | Stop a specific run by ID |
+| `get_logs` | Tail the log for a run |
+| `analyze_run` | Synthesized analysis of a run: TensorBoard metrics plus a log tail |
+| `list_queue` | Runs waiting in a project's queue, in start order, with the reason each is waiting |
+| `cancel_queued_run` | Take a run out of the queue before it starts |
+
+### Pipelines
+
+| Tool | Description |
+|------|-------------|
+| `list_pipelines` | List pipelines with their latest run. Takes an optional `folder`. |
+| `get_pipeline` | A pipeline's definition, parsed and as raw YAML |
+| `validate_pipeline` | Check pipeline YAML without saving it |
+| `create_pipeline` | Create a pipeline from YAML |
+| `update_pipeline` | Replace a pipeline's YAML. Runs already going keep the definition they started with. |
+| `delete_pipeline` | Delete a pipeline and its run history. The training runs it started are kept. |
+| `start_pipeline` | Start a run, or queue it if one is already going. `branches` maps train step names to branches. |
+| `pipeline_status` | Status of a run, step by step, with training run refs, wait reasons and errors. Without `run_id` you get the latest run that started. |
+| `list_pipeline_runs` | Recent runs of a pipeline, newest first |
+| `cancel_pipeline` | Cancel a run and stop its current step |
+| `resume_pipeline` | Resume a failed or cancelled run, or pass `from_step` to re-run from an earlier step |
+| `dismiss_pipeline_run` | Skip a failed run so the next queued run can start |
+| `get_step_log` | Log of a task step. For a train step, use `get_logs` with the step's run ID. |
+
+### Folders
+
+| Tool | Description |
+|------|-------------|
+| `list_folders` | Folder names in use |
+| `rename_folder` | Rename a folder, moving every project and pipeline in it |
+
+### Server
+
+| Tool | Description |
+|------|-------------|
+| `get_stats` | System GPU/CPU/memory stats, plus GPU driver version and the max CUDA version it supports |
+| `get_capacity` | Training slot capacity (total, running, available), resource load, and the same GPU platform info |
+| `check_busy` | Whether anything is running, including project setup and pipeline task steps. Prefer `get_capacity` for new workflows. |
 
 ## Starting a Claude Session
 

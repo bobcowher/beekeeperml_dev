@@ -13,6 +13,7 @@ export default defineConfig({
         { label: 'Getting Started', slug: 'docs/getting-started' },
         { label: 'Projects', slug: 'docs/projects' },
         { label: 'Training', slug: 'docs/training' },
+        { label: 'Pipelines', slug: 'docs/pipelines' },
         { label: 'MCP Server', slug: 'docs/mcp-server' },
         { label: 'API Reference', slug: 'docs/api-reference' },
       ],

@@ -5,7 +5,7 @@ description: Creating, configuring, and managing BeekeeperML projects.
 
 ## Creating a Project
 
-From the dashboard, click **+ New Project** and fill in:
+Click **Projects** in the sidebar, then **+ New Project**, and fill in:
 
 | Field | Description | Default |
 |-------|-------------|---------|
@@ -22,6 +22,7 @@ From the dashboard, click **+ New Project** and fill in:
 | Data Dir (system) | Absolute path on the server to a persistent data volume | — |
 | Output Paths to Save | Workspace-relative directories to preserve in persistent storage across workspace cleanups | — |
 | Environment Variables | Key-value pairs passed to the training process (optional — can also be added later via Edit) | — |
+| Folder | Optional label for grouping projects, see [Folders](#folders) | — |
 
 Every field has a tooltip — hover the **?** icon for a description.
 
@@ -49,8 +50,15 @@ Click **Edit** on the project page to change:
 - Environment variables
 - Parallel runs settings
 - GPU memory management
+- Folder
 
 Git URL, Python version, and environment type are fixed after creation. Use the **Rename Project** card at the bottom of the Edit page to change the name — run history moves with it. Rename is blocked while setup or training is active.
+
+## Deleting a Project
+
+**Delete Project** is at the bottom of the project page. It removes the workspace, the environment, the logs and the run history, so if you create a new project with the same name later, it starts from run 1 with a clean slate. There's no undo.
+
+You can't delete a project while one of its runs is starting or running. Stop it first.
 
 ## Environment Variables
 
@@ -195,3 +203,13 @@ Your preference is saved in the browser and remembered across sessions.
 ### Pinning
 
 Click the 📌 icon on any project row to pin it. Pinned projects always appear above the sorted list, regardless of sort order. Click again to unpin. Pin state is saved on the server.
+
+### Folders
+
+Once you've got more than a handful of projects, the list gets long. Folders let you group them. Set the **Folder** field when you create or edit a project, and it'll be listed under that folder on the Projects page. Projects without one go under **Unfiled**. Click a folder's heading to collapse it. Your browser remembers which ones you've collapsed.
+
+A folder is just a label, so there's nothing to create or delete. It exists as long as something is in it. Folders are flat too, with no folders inside folders. Names can use letters, digits, spaces, `_`, `.` and `-`, up to 64 characters.
+
+[Pipelines](/docs/pipelines/) can have a folder as well, and the same names work for both. The Pipelines page groups them the same way. It's handy to keep a pipeline in the same folder as the projects it trains.
+
+To rename a folder, use the API or MCP (`rename_folder`). It moves every project and pipeline in it to the new name in one go. There isn't a button for it in the UI yet.
