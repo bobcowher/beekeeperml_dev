@@ -5,7 +5,7 @@ description: Install BeekeeperML on your home lab server in minutes.
 
 ## Requirements
 
-- Python 3.10+
+- Python 3.10, 3.11 or 3.12
 - Git
 - Linux server with systemd (tested on Ubuntu)
 - GPU optional but recommended
@@ -22,10 +22,12 @@ bash setup.sh
 
 The setup script will:
 
-1. Detect your Python version (3.12, 3.11, 3.10, or python3)
+1. Look for `python3.12`, then `python3.11`, then `python3.10`, and fall back to plain `python3`
 2. Create a venv and install dependencies
 3. Generate and install a systemd service file (requires sudo)
 4. Enable and start the service
+
+Watch that fallback. BeekeeperML pins `numpy<2.0`, which doesn't publish wheels for Python 3.13 or newer, so if your `python3` is 3.13+ the install will fail partway through. Newer distros ship 3.13 or 3.14 as the default. If that's you, install 3.12 (through conda, pyenv, or your package manager) and make sure it's on your PATH before running `setup.sh`.
 
 Once complete, BeekeeperML is running on port 5000. Open `http://your-server:5000` in a browser.
 

@@ -35,7 +35,7 @@ If `beekeeper-mcp` isn't on your PATH after install, use the full path from `whi
 
 ## Register with Claude Desktop
 
-Add to `~/.claude/claude_desktop_config.json`:
+Add this to `claude_desktop_config.json`. On macOS it lives in `~/Library/Application Support/Claude/`, and on Windows it's in `%APPDATA%\Claude\`. You can also get to it from Claude Desktop under Settings, then Developer, then Edit Config.
 
 ```json
 {

@@ -125,10 +125,10 @@ Returns trend analysis, quartile breakdown, and recent averages for episode rewa
 
 ## Authentication
 
-If auth is enabled, pass your API key as a header:
+If auth is enabled, send your API key as a bearer token:
 
 ```bash
-curl -H 'X-API-Key: your-api-key' http://your-server:5000/api/v1/projects
+curl -H 'Authorization: Bearer your-api-key' http://your-server:5000/api/v1/projects
 ```
 
 Generate and manage API keys from the Admin panel.
