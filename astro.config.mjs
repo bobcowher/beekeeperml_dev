@@ -14,6 +14,7 @@ export default defineConfig({
         { label: 'Projects', slug: 'docs/projects' },
         { label: 'Training', slug: 'docs/training' },
         { label: 'Pipelines', slug: 'docs/pipelines' },
+        { label: 'Running on Runpod', slug: 'docs/runpod' },
         { label: 'MCP Server', slug: 'docs/mcp-server' },
         { label: 'API Reference', slug: 'docs/api-reference' },
       ],

@@ -44,7 +44,7 @@ Full interactive reference: `http://your-server:5000/api/v1/docs`
 | List folders | GET | `/api/v1/folders` |
 | Rename folder | POST | `/api/v1/folders/<folder>/rename` |
 
-Pipeline endpoints are listed [further down](#pipelines).
+Pipeline endpoints are listed [further down](#pipelines), and Runpod ones [after that](#runpod).
 
 ## Starting a Training Run
 
@@ -226,6 +226,55 @@ curl -X POST http://your-server:5000/api/v1/folders/chess/rename \
 
 That moves every project and pipeline in `chess` to `chess-v2`. `GET /projects` and `GET /pipelines` both take `?folder=<name>` to filter, and an empty `?folder=` gives you the unfiled ones.
 
+## Runpod
+
+These only exist when Runpod is turned on under **Admin → Compute Providers**. With it off, they return `404`, and the Runpod project fields below aren't in project responses. See [Running on Runpod](/docs/runpod/) for how it all works.
+
+| Action | Method | Endpoint |
+|--------|--------|----------|
+| Pool status | GET | `/api/v1/compute/runpod` |
+| GPU types | GET | `/api/v1/compute/runpod/gpus?cloud=COMMUNITY` |
+| Terminate a pod | POST | `/api/v1/compute/runpod/pods/<pod_name>/terminate` |
+| Reset total spend | POST | `/api/v1/compute/runpod/reset-total` |
+
+`GET /compute/runpod` returns the pool's settings (never the API key), spend for each period with its caps, the current burn rate, one entry per live pod, and recent finished Runpod runs:
+
+```json
+{
+  "success": true,
+  "data": {
+    "spend": {
+      "daily": {"spent": 0.0324, "soft": 0.75, "hard": 1.0},
+      "monthly": {"spent": 0.0324, "soft": null, "hard": null},
+      "total": {"spent": 0.0324, "soft": null, "hard": 1.5}
+    },
+    "burn_rate": 0.17,
+    "pods": [
+      {"pod_name": "bk-d79428-iris-rp2-2", "run_ref": "iris-rp2-2", "gpu_type": "NVIDIA RTX A4000",
+       "cost_per_hr": 0.17, "phase": "train", "phase_detail": "training", "spent": 0.0011, "...": "..."}
+    ],
+    "settings": {"cloud_type": "COMMUNITY", "gpu_types": [], "max_concurrent_pods": 2, "...": "..."}
+  }
+}
+```
+
+`GET /compute/runpod/gpus` lists GPU types with `vram_gb`, `price_per_hr` and `availability` (`NONE`, `LOW`, `MEDIUM` or `HIGH`), in stock first and cheapest first. Use the `id` values in a project's GPU list.
+
+Terminating a pod stops the run that owns it, gives the results a short final sync, and deletes the pod. It also works on a stray pod that no run owns.
+
+To set a project up for Runpod, `PATCH /projects/<name>` (or `POST /projects` when creating one) takes:
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `compute_target` | string | `local` or `runpod` |
+| `runpod_gpu_types` | list of strings | GPU type ids to try, in order. `[]` uses the pool's list. |
+| `runpod_image` | string | Image override. `""` uses the pool default. |
+| `data_dir_sync` | bool | Upload the data dir to the pod before training |
+
+Sending any of these while Runpod is off gets a `400` with `RUNPOD_DISABLED`. Moving a project from `runpod` to `local` builds its local environment if it doesn't have one yet, and `setup_status` goes back to `pending` until that's done.
+
+While a Runpod run is active, its entry in `GET /projects/<name>/training/status` has a `node` object with `pod_name`, `gpu_type`, `phase` (`provision`, `upload`, `prepare`, `train` or `finalize`), `phase_detail`, `cost_per_hr` and `last_sync_at`.
+
 ## Error Codes
 
 | Code | Status | When |
@@ -237,6 +286,23 @@ That moves every project and pipeline in `chess` to `chess-v2`. `GET /projects` 
 | `PIPELINE_ACTIVE` | 409 | Deleting or resuming a pipeline that has a run going |
 | `ARTIFACTS_MISSING` | 409 | Resuming when an earlier step's output folder is gone |
 | `NOT_LATEST` | 409 | Resuming or dismissing a run that isn't the pipeline's latest |
+| `RUNPOD_DISABLED` | 400 | Setting a Runpod project field while Runpod is off |
+
+A start that's refused comes back as `400` with `START_ERROR`, and the reason is in `error.details.code`. For Runpod projects, these can show up there:
+
+| Code | When | Queue it? |
+|------|------|-----------|
+| `SOFT_CAP` | A soft or hard spend cap has been reached | Yes, it waits for the period to reset |
+| `NO_GPU_AVAILABLE` | Nothing on the GPU list (or nothing big enough) is in stock | Yes, it retries every few seconds |
+| `AT_CAPACITY` | The pool is already running its max number of pods | Yes |
+| `NO_SPEND_CAP` | No hard cap is set in any period | No, set one first |
+| `RUNPOD_NOT_CONFIGURED` | No API key | No |
+| `DATA_DIR_NOT_SYNCED` | The project has a data dir but **Sync data dir on startup** is off | No |
+| `DATA_DIR_MISSING` | The data dir doesn't exist on the server | No |
+| `UPLOAD_TOO_LARGE` | Workspace, data dir and pipeline inputs add up to more than the upload limit | No |
+| `REMOTE_CONDA_UNSUPPORTED` | Conda projects can't run on Runpod yet | No |
+
+"Queue it" means the run queue will wait it out, so `{"queue": true}` on the start call is the way to go.
 
 ## Cross-Site Requests
 

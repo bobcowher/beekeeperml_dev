@@ -53,7 +53,7 @@ Add this to `claude_desktop_config.json`. On macOS it lives in `~/Library/Applic
 
 ## Upgrading
 
-The server and the MCP package are versioned separately. This release of BeekeeperML needs `beekeeper-mcp` 0.5.0 or newer. An older version will still connect, but it won't have the pipeline, folder or queue tools, and it doesn't know about the changes to run IDs and the busy check. Upgrade with:
+The server and the MCP package are versioned separately. This release of BeekeeperML needs `beekeeper-mcp` 0.6.0 or newer. An older version will still connect, but it won't have the Runpod tools, and before 0.5.0 it's also missing the pipeline, folder and queue tools and doesn't know about the changes to run IDs and the busy check. Upgrade with:
 
 ```bash
 pip install -U beekeeper-mcp
@@ -71,7 +71,7 @@ The `get_version` tool tells you if you're behind. It's a good idea to have your
 | `list_projects` | List projects and their status. Takes an optional `folder` to filter on. |
 | `get_project` | Full project detail including current run state |
 | `get_project_instructions` | Per-project agent instructions (goals, metrics, notes) |
-| `create_project` | Create a project, with optional `output_paths` and `folder` |
+| `create_project` | Create a project, with optional `output_paths`, `folder`, `setup_script` and `compute_target` |
 | `update_project` | Update project settings: branch, train file, TB dir, env vars, data directory, GPU management, folder, and so on |
 | `rename_project` | Rename a project. Run history moves with it. |
 | `delete_project` | Delete a project. Refused while one of its runs is starting or running. |
@@ -123,6 +123,18 @@ The `get_version` tool tells you if you're behind. It's a good idea to have your
 | `get_stats` | System GPU/CPU/memory stats, plus GPU driver version and the max CUDA version it supports |
 | `get_capacity` | Training slot capacity (total, running, available), resource load, and the same GPU platform info |
 | `check_busy` | Whether anything is running, including project setup and pipeline task steps. Prefer `get_capacity` for new workflows. |
+
+### Runpod
+
+These only work when Runpod is turned on for the server. See [Running on Runpod](/docs/runpod/).
+
+| Tool | Description |
+|------|-------------|
+| `get_compute_status` | Spend for each period against its caps, the burn rate, live pods and recent Runpod runs |
+| `list_runpod_gpus` | GPU types with stock, VRAM and price. Use the ids in `update_project(runpod_gpu_types=...)`. |
+| `terminate_pod` | Stop the run on a pod and terminate it. For an ordinary stop, `stop_training` does the same thing. |
+
+`create_project` takes `compute_target` (and `setup_script`), and `update_project` takes `compute_target`, `runpod_gpu_types`, `runpod_image` and `data_dir_sync`. There's no tool for resetting the total spend counter. That one's in **Admin**, on purpose.
 
 ## Starting a Claude Session
 

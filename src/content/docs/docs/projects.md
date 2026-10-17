@@ -23,6 +23,7 @@ Click **Projects** in the sidebar, then **+ New Project**, and fill in:
 | Output Paths to Save | Workspace-relative directories to preserve in persistent storage across workspace cleanups | — |
 | Environment Variables | Key-value pairs passed to the training process (optional — can also be added later via Edit) | — |
 | Folder | Optional label for grouping projects, see [Folders](#folders) | — |
+| Run training on | This server, or Runpod. Only shown when Runpod is turned on. See [Running on Runpod](/docs/runpod/). | This server |
 
 Every field has a tooltip — hover the **?** icon for a description.
 
@@ -33,6 +34,8 @@ Once you submit, BeekeeperML runs the following in the background:
 3. **Data dir symlink** — if enabled, creates a symlink from `workspace/<local path>` to the system data directory
 4. **Setup script** — if configured and the file exists, runs it from the workspace root
 5. **Pip install** — installs packages from the requirements file
+
+A project set to run on Runpod stops after the clone. Its environment gets built on the pod at every run instead, so there's nothing to install here.
 
 The project page refreshes automatically and shows the current step. If any step fails, the error is displayed and a **Retry Setup** button appears. Retry is smart — it skips the clone and environment creation if they already completed, and picks up from the failed step.
 
