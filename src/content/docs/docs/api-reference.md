@@ -228,7 +228,7 @@ That moves every project and pipeline in `chess` to `chess-v2`. `GET /projects` 
 
 ## Runpod
 
-These only exist when Runpod is turned on under **Admin → Compute Providers**. With it off, they return `404`, and the Runpod project fields below aren't in project responses. See [Running on Runpod](/docs/runpod/) for how it all works.
+These only exist when Runpod is turned on under **Admin → Compute Providers**. With it off, they return `404`, and the Runpod project fields below aren't in project responses. See [Runpod](/docs/cloud-providers/runpod/) for how it all works.
 
 | Action | Method | Endpoint |
 |--------|--------|----------|

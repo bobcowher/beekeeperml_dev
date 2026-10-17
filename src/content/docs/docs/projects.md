@@ -23,7 +23,7 @@ Click **Projects** in the sidebar, then **+ New Project**, and fill in:
 | Output Paths to Save | Workspace-relative directories to preserve in persistent storage across workspace cleanups | — |
 | Environment Variables | Key-value pairs passed to the training process (optional — can also be added later via Edit) | — |
 | Folder | Optional label for grouping projects, see [Folders](#folders) | — |
-| Run training on | This server, or Runpod. Only shown when Runpod is turned on. See [Running on Runpod](/docs/runpod/). | This server |
+| Run training on | This server, or Runpod. Only shown when Runpod is turned on. See [Runpod](/docs/cloud-providers/runpod/). | This server |
 
 Every field has a tooltip — hover the **?** icon for a description.
 

@@ -19,7 +19,7 @@ BeekeeperML runs the following sequence before launching your script:
 
 If any step fails, training is aborted and the error is shown on the project page.
 
-For a project that runs on Runpod, the git sync still happens here, and everything after it happens on the pod. See [Running on Runpod](/docs/runpod/#what-happens-during-a-run).
+For a project that runs on Runpod, the git sync still happens here, and everything after it happens on the pod. See [Runpod](/docs/cloud-providers/runpod/#what-happens-during-a-run).
 
 Closing the browser tab has no effect on the running process.
 

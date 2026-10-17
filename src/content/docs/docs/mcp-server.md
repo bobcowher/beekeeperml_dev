@@ -126,7 +126,7 @@ The `get_version` tool tells you if you're behind. It's a good idea to have your
 
 ### Runpod
 
-These only work when Runpod is turned on for the server. See [Running on Runpod](/docs/runpod/).
+These only work when Runpod is turned on for the server. See [Runpod](/docs/cloud-providers/runpod/).
 
 | Tool | Description |
 |------|-------------|
