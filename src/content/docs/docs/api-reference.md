@@ -29,7 +29,7 @@ Full interactive reference: `http://your-server:5000/api/v1/docs`
 | Check status | GET | `/api/v1/projects/<name>/training/status` |
 | List run queue | GET | `/api/v1/projects/<name>/queue` |
 | Cancel queued run | DELETE | `/api/v1/projects/<name>/queue/<queue_id>` |
-| Get logs | GET | `/api/v1/projects/<name>/logs?tail=100` |
+| Get logs | GET | `/api/v1/projects/<name>/logs?tail=100&run_id=3` (no `run_id`: latest run) |
 | Episode analysis | GET | `/api/v1/projects/<name>/logs/analysis` |
 | Get metrics | GET | `/api/v1/projects/<name>/tensorboard/latest` |
 | Run history | GET | `/api/v1/projects/<name>/runs` |
