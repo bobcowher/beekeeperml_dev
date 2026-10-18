@@ -14,6 +14,8 @@ There are two kinds of step:
 
 Steps hand files to each other the way scripts do in a local repo. If `pretrain.py` leaves `checkpoints/pretrained.pt` behind, the next step can open `checkpoints/pretrained.pt` too. See [Passing Files Between Steps](#passing-files-between-steps).
 
+This page is the reference. For how to lay out a pipeline (which step type to use, where files should live, how to stop a bad model from being promoted), see [Designing a Pipeline](/docs/pipeline-design/).
+
 ## Creating a Pipeline
 
 Click **Pipelines** in the sidebar, then **+ New Pipeline**. You can build it in the graphical editor or write YAML directly. The two tabs edit the same definition, so you can switch back and forth. One catch: the graphical view rewrites the YAML, so any comments you've written there get dropped. You'll get a warning before that happens.
@@ -64,6 +66,7 @@ Hit **Validate** to check it before saving. Errors point at the exact field, lik
 | `name` | yes | Lowercase letters, digits, `_` or `-`, up to 64 characters. Has to start with a letter or digit. |
 | `description` | no | Shown on the Pipelines list. |
 | `folder` | no | See [Folders](/docs/projects/#folders). |
+| `keep` | no | `on_success` keeps every run that succeeds. See [Keeping Runs](#keeping-runs). |
 | `steps` | yes | A list of 1 to 32 steps. |
 
 ### Train steps
@@ -256,6 +259,19 @@ Sometimes every step succeeded and you just want to redo the last part, like re-
 
 Both Resume and Re-run need the earlier steps' output folders to still exist. If one has been cleaned up, Beekeeper tells you which one and refuses rather than running the step with missing inputs. Only the latest run of a pipeline can be resumed or re-run.
 
+## Keeping Runs
+
+Each project keeps a set number of runs (**Max Run History Records** in its settings, 10 by default). When a new run pushes an old one past the limit, the old run's record, log and run folder are deleted. A pipeline's steps make ordinary project runs, so they're pruned the same way, unless something protects them:
+
+- **The pipeline's latest run.** Its runs are kept so it can be resumed or re-run, until the pipeline starts another run.
+- **A kept run.** **Keep Run** on the pipeline page keeps the run you're looking at. Every training run and project task it made is protected, in every project it touched. Click it again (**✓ Kept**) to hand them back to normal pruning. Nothing is deleted right away; the runs are pruned the next time their project starts a run.
+- **`keep: on_success`.** Set at the top of the YAML, it keeps each run that succeeds as soon as it finishes. A run that fails or is cancelled isn't kept.
+- **Notable runs.** A single run marked notable in its project's history is never pruned, whatever pipeline it belongs to.
+
+Use `keep: on_success` on any pipeline that promotes or deploys a model. The run that made it is the one you'll want when you need to retrain or roll back.
+
+Kept runs add up. A pipeline that passes large checkpoints with `inherit` stores a copy in every step's run folder, so release the runs you're done with. Deleting a pipeline removes its run history and with it the Keep marks. The training runs stay in their projects, and from then on are pruned like any other run.
+
 ## Restarts
 
 Pipelines survive a Beekeeper restart, but the steps that were running when it went down don't always. A task step that was running is failed with "interrupted by restart". A train step gets 60 seconds to show it's still alive, then it's failed with "run lost". Either way, you can **Resume** once Beekeeper is back up.
@@ -266,4 +282,4 @@ Pipelines survive a Beekeeper restart, but the steps that were running when it w
 
 ## Using Pipelines From an Agent
 
-Everything here is available through the [API](/docs/api-reference/#pipelines) and the [MCP server](/docs/mcp-server/#pipelines). An agent can write the YAML, check it with `validate_pipeline`, start runs with different branches, and resume them when something breaks.
+Everything here is available through the [API](/docs/api-reference/#pipelines) and the [MCP server](/docs/mcp-server/#pipelines). An agent can write the YAML, check it with `validate_pipeline`, start runs with different branches, resume them when something breaks, and keep the ones worth keeping with `keep_pipeline_run`.

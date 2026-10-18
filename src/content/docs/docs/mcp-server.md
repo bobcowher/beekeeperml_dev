@@ -53,7 +53,7 @@ Add this to `claude_desktop_config.json`. On macOS it lives in `~/Library/Applic
 
 ## Upgrading
 
-The server and the MCP package are versioned separately. This release of BeekeeperML needs `beekeeper-mcp` 0.7.0 or newer. An older version will still connect, but before 0.7.0 it doesn't know about `script`, `inherit` and project tasks in pipelines and has no `build_local_env`, before 0.6.0 it has no Runpod tools, and before 0.5.0 it's also missing the pipeline, folder and queue tools and doesn't know about the changes to run IDs and the busy check. Upgrade with:
+The server and the MCP package are versioned separately. This release of BeekeeperML needs `beekeeper-mcp` 0.8.0 or newer. An older version will still connect, but before 0.8.0 it can't keep pipeline runs or mark runs notable, before 0.7.0 it doesn't know about `script`, `inherit` and project tasks in pipelines and has no `build_local_env`, before 0.6.0 it has no Runpod tools, and before 0.5.0 it's also missing the pipeline, folder and queue tools and doesn't know about the changes to run IDs and the busy check. Upgrade with:
 
 ```bash
 pip install -U beekeeper-mcp
@@ -89,6 +89,7 @@ The `get_version` tool tells you if you're behind. It's a good idea to have your
 | `stop_training` | Stop a specific run by ID |
 | `get_logs` | Tail the log for a run |
 | `analyze_run` | Synthesized analysis of a run: TensorBoard metrics plus a log tail |
+| `set_run_notable` | Mark a run notable so history pruning never deletes it, or clear the mark |
 | `list_queue` | Runs waiting in a project's queue, in start order, with the reason each is waiting |
 | `cancel_queued_run` | Take a run out of the queue before it starts |
 
@@ -108,6 +109,7 @@ The `get_version` tool tells you if you're behind. It's a good idea to have your
 | `cancel_pipeline` | Cancel a run and stop its current step |
 | `resume_pipeline` | Resume a failed or cancelled run, or pass `from_step` to re-run from an earlier step |
 | `dismiss_pipeline_run` | Skip a failed run so the next queued run can start |
+| `keep_pipeline_run` | Keep a run, so the runs its steps made are never pruned, or pass `keep=False` to release it. See [Keeping Runs](/docs/pipelines/#keeping-runs). |
 | `get_step_log` | Log of a task step. For a train step or a project task, use `get_logs` with the step's run ID. |
 
 When validation offers a fix, like adding an output path with `update_project(output_paths_add=[...])` or calling `build_local_env`, the tool descriptions tell the agent to check with you first. Adding an output path changes every run of that project, not just the pipeline's.

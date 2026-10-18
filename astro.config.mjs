@@ -14,6 +14,7 @@ export default defineConfig({
         { label: 'Projects', slug: 'docs/projects' },
         { label: 'Training', slug: 'docs/training' },
         { label: 'Pipelines', slug: 'docs/pipelines' },
+        { label: 'Designing a Pipeline', slug: 'docs/pipeline-design' },
         {
           label: 'Cloud Providers',
           items: [{ label: 'Runpod', slug: 'docs/cloud-providers/runpod' }],

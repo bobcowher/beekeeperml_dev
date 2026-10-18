@@ -34,6 +34,7 @@ Full interactive reference: `http://your-server:5000/api/v1/docs`
 | Episode analysis | GET | `/api/v1/projects/<name>/logs/analysis` |
 | Get metrics | GET | `/api/v1/projects/<name>/tensorboard/latest` |
 | Run history | GET | `/api/v1/projects/<name>/runs` |
+| Mark a run notable | PATCH | `/api/v1/projects/<name>/runs/<run_id>` with `{"notable": true}` |
 | List branches | GET | `/api/v1/projects/<name>/branches` |
 | Switch branch | POST | `/api/v1/projects/<name>/branch` |
 | Run artifacts | GET | `/api/v1/projects/<name>/runs/<run_id\|latest>/files` |
@@ -195,6 +196,7 @@ See [Pipelines](/docs/pipelines/) for how they work and what the YAML looks like
 | Cancel a run | POST | `/api/v1/pipelines/<name>/runs/<run_id>/cancel` |
 | Resume or re-run | POST | `/api/v1/pipelines/<name>/runs/<run_id>/resume` |
 | Skip and continue | POST | `/api/v1/pipelines/<name>/runs/<run_id>/dismiss` |
+| Keep a run | POST | `/api/v1/pipelines/<name>/runs/<run_id>/keep` with `{"keep": true}` or `false` |
 | Task step log | GET | `/api/v1/pipelines/<name>/runs/<run_id>/steps/<step>/log?tail=500` |
 
 Create, validate and replace take either YAML or JSON. Send YAML with `Content-Type: application/yaml` and the file is saved exactly as you wrote it, comments and all:
