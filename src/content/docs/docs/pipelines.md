@@ -91,12 +91,14 @@ A train step doesn't get special treatment. It goes into the project's normal [r
 |-------|----------|-------|
 | `name` | yes | Same rules as train steps. |
 | `type` | yes | `task` |
-| `command` | yes | Run with `bash -c`, so pipes, `&&` and multi-line scripts all work. |
+| `command` | yes | Run with `bash -o pipefail -c`, so pipes, `&&` and multi-line scripts all work. |
 | `project` | no | Run the command in this project's workspace. See [Project Tasks](#project-tasks). |
 | `inherit` | no | Output paths to copy from the previous step. |
 | `timeout_s` | no | Seconds before the task is killed. Defaults to 3600, max 86400. |
 
 A task succeeds if the command exits with 0. Anything else fails the step.
+
+`pipefail` is on, so a pipe fails when any command in it does. `python eval.py | tee eval.log` fails the step when `eval.py` crashes, where plain `bash -c` would report `tee`'s exit code and carry on. The catch is a pipe that stops reading early: in `yes | head -1`, `yes` is killed when `head` exits, and the pipe exits with 141. Add `|| true` to a pipe like that if it's expected.
 
 Where the command runs depends on the step:
 
@@ -130,6 +132,7 @@ The rules:
 
 - **It's opt-in.** A step without `inherit` gets nothing copied.
 - **It names output paths, not steps.** The paths have to be [output paths](/docs/training/#artifact-storage) of the previous step's project and of this step's project. A task without a project only needs the previous step to have them.
+- **It can take part of an output path.** `checkpoints/posttrain` copies just that folder into `checkpoints/posttrain` and leaves the rest of `checkpoints/` behind. A single file works the same way. Use it when a step needs one model out of a folder that holds several.
 - **It only takes from the previous step.** A step can't reach two steps back with `inherit`. Passing a folder down a chain works because each step that inherits a path also has it, so the next step can inherit it from there.
 - **It copies.** The files land in this run's own run folder, so a step that changes an inherited file never touches the earlier run. Beekeeper copies with `cp --reflink=auto`, which costs nothing on btrfs or XFS and is a normal copy on ext4.
 - **It doesn't change where the run writes.** The inherited `checkpoints/` is the same folder the script saves into, so anything it adds is kept with the run and passed on if the next step inherits `checkpoints` too.
@@ -172,7 +175,8 @@ In the editor, the second error comes with a button: **Add checkpoints to inheri
 Other things validation catches:
 
 - `inherit` on the first step (`the first step has nothing to inherit from`).
-- An inherited path that's also the project's TensorBoard dir, or its data dir link when it has a data dir (`data` by default).
+- An inherited path that's, or is inside, the project's TensorBoard dir, or its data dir link when it has a data dir (`data` by default).
+- A path listed inside another one the same step inherits, like `[checkpoints, checkpoints/posttrain]`.
 
 When the step starts, Beekeeper checks again, since project settings can change after a pipeline is saved. It also fails the step, before anything runs or any pod is rented, if the earlier run's folder doesn't have the path, or if the path is a real, tracked file or folder in the receiving repo. An inherited folder that exists but is empty only gets a warning in the log.
 

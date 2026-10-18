@@ -112,7 +112,7 @@ That's `evaluate`'s folder, `spirals-10`. Everything except `eval/` was inherite
 ]}
 ```
 
-Inherited files are copies. A 4 KB checkpoint costs nothing, but on ext4 a 5 GB one passed through four steps is stored four times. On btrfs or XFS the copies share blocks and cost nothing. For big checkpoints on ext4, pass them only as far as they're needed.
+Inherited files are copies. A 4 KB checkpoint costs nothing, but on ext4 a 5 GB one passed through four steps is stored four times. On btrfs or XFS the copies share blocks and cost nothing. For big checkpoints on ext4, pass them only as far as they're needed, and only the part a step reads. `inherit: [checkpoints/pretrain]` copies that one folder and leaves the rest of `checkpoints/` behind.
 
 ### Fail loudly when a file is missing
 
