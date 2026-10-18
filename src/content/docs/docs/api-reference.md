@@ -24,6 +24,7 @@ Full interactive reference: `http://your-server:5000/api/v1/docs`
 | Rename project | POST | `/api/v1/projects/<name>/rename` |
 | Delete project | DELETE | `/api/v1/projects/<name>` |
 | Retry setup | POST | `/api/v1/projects/<name>/setup/retry` |
+| Build local environment | POST | `/api/v1/projects/<name>/local-env` |
 | Start or queue training | POST | `/api/v1/projects/<name>/training/start` |
 | Stop training | POST | `/api/v1/projects/<name>/training/stop` |
 | Check status | GET | `/api/v1/projects/<name>/training/status` |
@@ -45,6 +46,18 @@ Full interactive reference: `http://your-server:5000/api/v1/docs`
 | Rename folder | POST | `/api/v1/folders/<folder>/rename` |
 
 Pipeline endpoints are listed [further down](#pipelines), and Runpod ones [after that](#runpod).
+
+`PATCH /api/v1/projects/<name>` takes `output_paths_add`, a list of paths to add to the project's output paths. Paths it already has are skipped. Like other settings changes, it's refused while the project has a run going:
+
+```bash
+curl -X PATCH http://your-server:5000/api/v1/projects/chess \
+     -H 'Content-Type: application/json' \
+     -d '{"output_paths_add": ["checkpoints"]}'
+```
+
+`POST /api/v1/projects/<name>/local-env` builds the project's environment on the server. A [Runpod](/docs/cloud-providers/runpod/) project needs one before it can run [project tasks](/docs/pipelines/#project-tasks). Its training stays on Runpod, but it can't start Runpod runs until the build finishes. The response is `{"status": "building"}`, and it's `409 SETUP_IN_PROGRESS` if a setup is already running.
+
+`GET /api/v1/projects` includes each project's `train_file` and `output_paths`.
 
 ## Starting a Training Run
 
@@ -199,6 +212,24 @@ An invalid definition comes back as `400` with `INVALID_PIPELINE`, and `error.de
 ```json
 {"path": "steps[1].env_vars.EPOCHS", "message": "must be a string, got int 3; quote it in YAML"}
 ```
+
+Pipelines are also checked against the projects they use: `script`, `inherit` and project tasks all depend on project settings. An error that one call would fix has an `error_code` and a `fix` object naming that call. Nothing is changed until you make it:
+
+```json
+{
+  "error_code": "INHERIT_PATH_NOT_DECLARED",
+  "fix": {"call": "update_project", "project": "inherit-local", "output_paths_add": ["checkpoints"]},
+  "message": "inherit-local doesn't list 'checkpoints' as an output path",
+  "path": "steps[1].inherit"
+}
+```
+
+| `error_code` | `fix.call` | Means |
+|------|------|------|
+| `INHERIT_PATH_NOT_DECLARED` | `update_project` with `output_paths_add` | A step inherits a path its project doesn't list as an output path. |
+| `TASK_NEEDS_LOCAL_ENV` | `build_local_env` (`POST /projects/<name>/local-env`) | A project task uses a Runpod project that has no environment on the server. |
+
+The same checks run when a pipeline run starts or resumes, so a project changed since the pipeline was saved fails right away instead of at the step that needs it.
 
 To start a run with different branches, pass a map of train step names to branches. Steps you leave out use the branch in the definition:
 

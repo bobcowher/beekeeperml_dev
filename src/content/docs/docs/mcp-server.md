@@ -53,7 +53,7 @@ Add this to `claude_desktop_config.json`. On macOS it lives in `~/Library/Applic
 
 ## Upgrading
 
-The server and the MCP package are versioned separately. This release of BeekeeperML needs `beekeeper-mcp` 0.6.0 or newer. An older version will still connect, but it won't have the Runpod tools, and before 0.5.0 it's also missing the pipeline, folder and queue tools and doesn't know about the changes to run IDs and the busy check. Upgrade with:
+The server and the MCP package are versioned separately. This release of BeekeeperML needs `beekeeper-mcp` 0.7.0 or newer. An older version will still connect, but before 0.7.0 it doesn't know about `script`, `inherit` and project tasks in pipelines and has no `build_local_env`, before 0.6.0 it has no Runpod tools, and before 0.5.0 it's also missing the pipeline, folder and queue tools and doesn't know about the changes to run IDs and the busy check. Upgrade with:
 
 ```bash
 pip install -U beekeeper-mcp
@@ -72,10 +72,11 @@ The `get_version` tool tells you if you're behind. It's a good idea to have your
 | `get_project` | Full project detail including current run state |
 | `get_project_instructions` | Per-project agent instructions (goals, metrics, notes) |
 | `create_project` | Create a project, with optional `output_paths`, `folder`, `setup_script` and `compute_target` |
-| `update_project` | Update project settings: branch, train file, TB dir, env vars, data directory, GPU management, folder, and so on |
+| `update_project` | Update project settings: branch, train file, TB dir, env vars, data directory, GPU management, folder, and so on. `output_paths_add` adds output paths. |
 | `rename_project` | Rename a project. Run history moves with it. |
 | `delete_project` | Delete a project. Refused while one of its runs is starting or running. |
 | `retry_setup` | Retry a failed project setup |
+| `build_local_env` | Build a project's environment on the server, so a Runpod project can run [project tasks](/docs/pipelines/#project-tasks). Its training stays on Runpod. |
 | `list_branches` | List remote branches for a project |
 | `switch_branch` | Change the project's active branch |
 
@@ -97,7 +98,7 @@ The `get_version` tool tells you if you're behind. It's a good idea to have your
 |------|-------------|
 | `list_pipelines` | List pipelines with their latest run. Takes an optional `folder`. |
 | `get_pipeline` | A pipeline's definition, parsed and as raw YAML |
-| `validate_pipeline` | Check pipeline YAML without saving it |
+| `validate_pipeline` | Check pipeline YAML without saving it. Errors that one call would fix include a `fix` naming that call. |
 | `create_pipeline` | Create a pipeline from YAML |
 | `update_pipeline` | Replace a pipeline's YAML. Runs already going keep the definition they started with. |
 | `delete_pipeline` | Delete a pipeline and its run history. The training runs it started are kept. |
@@ -107,7 +108,9 @@ The `get_version` tool tells you if you're behind. It's a good idea to have your
 | `cancel_pipeline` | Cancel a run and stop its current step |
 | `resume_pipeline` | Resume a failed or cancelled run, or pass `from_step` to re-run from an earlier step |
 | `dismiss_pipeline_run` | Skip a failed run so the next queued run can start |
-| `get_step_log` | Log of a task step. For a train step, use `get_logs` with the step's run ID. |
+| `get_step_log` | Log of a task step. For a train step or a project task, use `get_logs` with the step's run ID. |
+
+When validation offers a fix, like adding an output path with `update_project(output_paths_add=[...])` or calling `build_local_env`, the tool descriptions tell the agent to check with you first. Adding an output path changes every run of that project, not just the pipeline's.
 
 ### Folders
 

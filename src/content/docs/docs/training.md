@@ -63,7 +63,7 @@ The **Queued** list on the project page shows each waiting run with its position
 
 If a queued run can't ever start, say the project's setup failed, it's dropped from the queue with an error and the next one moves up.
 
-The dashboard has a **Queued** card too, so you can see everything that's waiting across all your projects.
+The dashboard's **Now** card lists everything that's running or waiting across all your projects.
 
 ## Switching Branches
 
@@ -93,6 +93,7 @@ Each row shows:
 - **Duration** — wall-clock time
 - **Status** — `completed`, `crashed`, or `canceled`
 - **Branch / Commit** — branch name and short commit SHA at the time of the run
+- **Script** — the script the run used. A pipeline step can run a different script from the project's default. A [project task](/docs/pipelines/#project-tasks) shows its command here, marked `task`.
 - **Tags** — custom labels you can add
 - **Actions** — Notes toggle, log download
 
@@ -118,8 +119,9 @@ Check the box on any two rows to enable the **Compare selected** button. The com
 
 ### Filtering
 
-The filter bar above the table has two controls:
+The filter bar above the table has three controls:
 
+- **All / Training / Tasks** — show every run, only training runs, or only project tasks
 - **★ Starred** — toggle to show only starred runs
 - **Filter by tag** — type to filter by tag name (partial match)
 
@@ -132,6 +134,18 @@ The **Artifacts** button next to it browses that run's persistent storage direct
 ### Pruning
 
 The **Cleanup Old Runs** button removes old run records, keeping the most recent N runs (configurable). Starred runs are never pruned. **Clear All History** removes all run records for the project.
+
+## Run History Page
+
+**Run History** in the sidebar lists finished runs from every project and pipeline, newest first, grouped by day. Each day's header shows how many runs finished, how many failed, and what the listed Runpod runs cost.
+
+- A training run shows the GPU it used (`RTX 5090`, or `Runpod RTX A4000` for a pod), its branch, how long it took, and its Runpod cost.
+- A pipeline run is one row with its steps in order, each marked ✓ or ✕ along with where it ran. The training runs a pipeline started aren't listed again.
+- A failed run is tinted red, with the step that failed and its error, like `export-weights: exit code 1`.
+
+The buttons at the top switch between **All**, **Pipelines**, **Training** and **Failures**. **Show more** at the bottom loads older runs. Each row links to the run's log or the pipeline's page.
+
+The dashboard only shows what's happening now. Its **Now** card lists running and queued runs, with a link to Run History.
 
 ## Artifact Storage
 

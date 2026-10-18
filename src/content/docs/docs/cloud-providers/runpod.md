@@ -96,9 +96,13 @@ If training only reads part of a large data directory, point the project at the 
 
 Pipelines work without changes. A train step for a Runpod project runs on Runpod.
 
-Inputs from earlier steps (`BEEKEEPER_STEP_<NAME>_DIR`, `BEEKEEPER_PREV_STEP_DIR`, `BEEKEEPER_PIPELINE_RUN_DIR`) are uploaded to the pod, and the variables are rewritten to point at the uploaded copies. Results sync back before the step is marked finished, so the next step finds them in the usual place.
+A step that uses [`inherit`](/docs/pipelines/#passing-files-between-steps) gets its inherited paths in the run folder before the pod is rented, and the run folder is uploaded with them. The script opens them by relative path, the same as on your server. Inherited paths count toward **Max upload per run**.
 
-Task steps always run on the Beekeeper server.
+For a step without `inherit`, the folders behind `BEEKEEPER_STEP_<NAME>_DIR`, `BEEKEEPER_PREV_STEP_DIR` and `BEEKEEPER_PIPELINE_RUN_DIR` are uploaded to the pod, and the variables are rewritten to point at the uploaded copies. Every earlier step's folder goes up, used or not, so long pipelines upload more than `inherit` would. The pipeline run folder goes up without its `steps/` folder, which only holds copies made by tasks.
+
+Either way, results sync back before the step is marked finished, so the next step finds them in the usual place.
+
+Task steps always run on the Beekeeper server, project tasks included. A [project task](/docs/pipelines/#project-tasks) on a Runpod project needs the project's environment built on the server first. Validation offers to do it.
 
 ## Stopping a Run
 
@@ -117,7 +121,7 @@ When Runpod is on, **Nodes** appears in the sidebar. It shows:
 - daily spend for the last 30 days
 - recent Runpod runs and why each one ended
 
-The dashboard also shows a **Remote Compute** line under System Stats with the pod count, burn rate, and today's spend against its cap.
+The dashboard also shows a **Remote Compute** card next to System Stats with the pod count, burn rate, and spend against each cap. On the [Run History](/docs/training/#run-history-page) page, Runpod runs show their GPU and cost.
 
 ## Restarts and Lost Pods
 
