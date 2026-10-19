@@ -59,7 +59,9 @@ The step type decides where the work runs and what it gets:
 | is quick CPU work in the repo | project task | Runs in the project's workspace with its environment, but gets no GPU. |
 | changes something outside Beekeeper | task without a project | Restarting a service or calling a webhook doesn't belong to any one run. |
 
-"Train step" means "a run of the project", not that it has to train anything. `evaluate.py` doesn't, but it's a train step in the example because evals usually need a GPU. Don't make an eval a plain task that sets `CUDA_VISIBLE_DEVICES` itself. Beekeeper's scheduler doesn't know about that GPU, so it can put a training run on the same card.
+"Train step" means "a run of the project", not that it has to train anything. `evaluate.py` doesn't, but it's a train step in the example because evals usually need a GPU. A train step runs one script with no arguments, so a stage that's several commands needs a small wrapper script.
+
+Don't make an eval a plain task that sets `CUDA_VISIBLE_DEVICES` itself. Beekeeper picks a card by how much memory is free when a run starts. It doesn't know a task is about to use a card, so the task and a training run can end up sharing one. The same goes for a service on the server that loads a model onto a GPU when it gets a request.
 
 The example's `prepare` and `promote` are project tasks. Both are quick and need the repo, and `promote` needs the project's data dir.
 
@@ -76,6 +78,8 @@ This is the decision that matters most. Every file a step reads has to live in o
 **Output paths belong to one run.** Each run gets its own copy, so run #3's checkpoints never overwrite run #2's. This is what you want for anything a run produces.
 
 **The data dir is shared.** It's a link to the same folder on the server for every run, so it's the place for things that outlive one run: datasets you don't want to rebuild, and the model a new one has to beat. Because it's shared, only write to it on purpose, from a step near the end. A pipeline where `train` writes into `data/` leaves half-finished files there when a later step fails, and resuming the run won't clean them up.
+
+**Not in the repo.** Every run starts by resetting the workspace to the branch, so a step that changes a tracked file loses the change on the next run. Results you want to keep in git go in an output path first, and you commit them yourself.
 
 **Outside Beekeeper is the last step's job.** Deploying, copying to a model server or restarting a service happens once, at the end, after the gates have passed.
 
@@ -223,7 +227,7 @@ To run it yourself, create the project from the example repo with those settings
 ## Before You Run It
 
 - Every script runs by hand from the repo root, with relative paths.
-- Every folder a step inherits is an output path of its project.
+- Every folder a step writes for a later step is an output path of its project.
 - Nothing reads a `BEEKEEPER_` variable to find its input.
 - A script stops with an error when an input is missing, instead of falling back.
 - Only the last steps write to the data dir or outside Beekeeper.
